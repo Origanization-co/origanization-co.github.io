@@ -24,9 +24,9 @@ html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font-fam
 button{font:inherit;color:inherit;cursor:pointer}
 
 /* app mode */
-#app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--nav)}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg)}
 #app iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
-#app .safe{flex:none;height:env(safe-area-inset-bottom,0px);background:var(--nav)}
+#sabProbe{position:fixed;bottom:0;height:env(safe-area-inset-bottom,0px);width:0;visibility:hidden}
 #loading{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);transition:opacity .3s}
 #loading.out{opacity:0;pointer-events:none}
 #loading img{width:96px;height:96px;border-radius:22px}
@@ -132,9 +132,9 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
   <button class="link" id="openWeb">לא עכשיו, להמשיך בדפדפן</button>
 </main>
 
+<div id="sabProbe"></div>
 <div id="app" hidden>
   <iframe id="frame" title="מעקב מחלקה" allow="clipboard-write; web-share; fullscreen"></iframe>
-  <div class="safe"></div>
   <div id="loading"><img src="icons/icon-192.png" alt=""></div>
 </div>
 
@@ -191,6 +191,24 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
     deferred.userChoice.finally(function () { deferred = null; document.getElementById('andOneTap').hidden = true; });
   });
   window.addEventListener('appinstalled', function () { document.getElementById('andOneTap').hidden = true; });
+
+  // storage bridge: the app frame keeps its settings here (first party) so they survive between launches,
+  // and gets the real bottom safe-area so its tab bar sits right above the home indicator
+  var KEYS = ['g2code', 'g2unit', 'tourDone', 'reqView', 'swHint'];
+  function okOrigin(o) { return /^https:[/][/][a-z0-9-]+[.]googleusercontent[.]com$/.test(o) || o === 'https:' + '/' + '/script.google.com'; }
+  window.addEventListener('message', function (e) {
+    var d = e.data; if (!d || !d.mk || !okOrigin(e.origin)) return;
+    try {
+      if (d.mk === 'get') {
+        var out = {};
+        KEYS.forEach(function (k) { var v = localStorage.getItem('mk:' + k); if (v != null) out[k] = v; });
+        var sab = document.getElementById('sabProbe').getBoundingClientRect().height || 0;
+        e.source.postMessage({ mk: 'data', data: out, sab: sab }, '*');
+      } else if (d.mk === 'set' && KEYS.indexOf(d.k) > -1) {
+        if (d.v == null) localStorage.removeItem('mk:' + d.k); else localStorage.setItem('mk:' + d.k, String(d.v));
+      }
+    } catch (x) {}
+  });
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 })();
