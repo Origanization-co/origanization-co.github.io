@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>מחלקה 2</title>
+<meta name="description" content="נוכחות, בקשות יציאה, רימונים וצל״מים · מחלקה 2 פלוגה ג׳">
+<meta name="theme-color" content="#14170F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="מחלקה 2">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap">
+<style>
+:root{--bg:#12150D;--surface:#1C2016;--fg:#E8EBDF;--muted:#9BA28E;--line:#3A4130;--accent:#9DBE6C;--accent-fg:#14170F;--nav:#1C2016;color-scheme:dark}
+@media (prefers-color-scheme: light){:root{--nav:#FFFFFF}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:"Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+
+/* app mode: the live app fills the screen; the bottom inset matches the app's tab bar */
+#app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--nav)}
+#app iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
+#app .safe{flex:none;height:env(safe-area-inset-bottom,0px);background:var(--nav)}
+#loading{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);transition:opacity .3s}
+#loading.out{opacity:0;pointer-events:none}
+#loading img{width:88px;height:88px;border-radius:22px}
+
+/* install page */
+#install{min-height:100%;display:grid;place-items:center;padding:32px 20px calc(32px + env(safe-area-inset-bottom,0px))}
+.card{width:100%;max-width:400px;display:grid;justify-items:center;gap:6px;text-align:center}
+.logo{width:112px;height:112px;border-radius:26px;box-shadow:0 8px 28px rgb(0 0 0 / .4)}
+h1{margin:14px 0 0;font-size:30px;font-weight:800}
+.sub{margin:0;color:var(--muted);font-size:16px;font-weight:600}
+.panel{width:100%;margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;text-align:start}
+.panel h2{margin:0 0 12px;font-size:17px;font-weight:700}
+ol{margin:0;padding:0;list-style:none;display:grid;gap:12px;counter-reset:s}
+ol li{display:flex;gap:12px;align-items:center;font-size:16px;line-height:1.4;counter-increment:s}
+ol li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-weight:800;display:grid;place-items:center;font-size:14px}
+.ic{display:inline-block;vertical-align:-4px;width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border-radius:12px;border:0;font:inherit;font-size:17px;font-weight:700;text-decoration:none;cursor:pointer}
+.primary{background:var(--accent);color:var(--accent-fg);margin-top:22px}
+.link{background:none;color:var(--muted);font-size:15px;font-weight:600;min-height:44px;margin-top:6px}
+.note{margin:12px 0 0;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div id="install" hidden>
+  <div class="card">
+    <img class="logo" src="icons/icon-512.png" alt="">
+    <h1>מחלקה 2</h1>
+    <p class="sub">פלוגה ג׳ · נוכחות, בקשות, רימונים וצל״מים</p>
+
+    <button class="btn primary" id="installBtn" hidden>
+      <svg class="ic" style="stroke:currentColor" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+      התקנת האפליקציה
+    </button>
+
+    <div class="panel" id="ios" hidden>
+      <h2>התקנה באייפון</h2>
+      <ol>
+        <li><span>לוחצים על כפתור השיתוף <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> בתחתית ספארי</span></li>
+        <li><span>גוללים ובוחרים <b>״הוספה למסך הבית״</b></span></li>
+        <li><span>לוחצים <b>״הוספה״</b>, והאייקון יופיע במסך הבית</span></li>
+      </ol>
+      <p class="note">אם פתחתם מוואטסאפ, לחצו קודם על ⋯ ובחרו ״פתיחה בספארי״.</p>
+    </div>
+
+    <div class="panel" id="android" hidden>
+      <h2>התקנה באנדרואיד</h2>
+      <ol>
+        <li><span>לוחצים על התפריט <b>⋮</b> בכרום</span></li>
+        <li><span>בוחרים <b>״התקנת אפליקציה״</b> או <b>״הוספה למסך הבית״</b></span></li>
+        <li><span>מאשרים, והאייקון יופיע במסך הבית</span></li>
+      </ol>
+    </div>
+
+    <div class="panel" id="desktop" hidden>
+      <h2>האפליקציה בנויה לטלפון</h2>
+      <p class="note" style="margin:0">שלחו לעצמכם את הקישור הזה ופתחו אותו בטלפון כדי להתקין. אפשר גם להמשיך כאן במחשב.</p>
+    </div>
+
+    <button class="btn link" id="openWeb">המשך בדפדפן בלי להתקין</button>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <iframe id="frame" title="מחלקה 2" allow="clipboard-write; web-share; fullscreen"></iframe>
+  <div class="safe"></div>
+  <div id="loading"><img src="icons/icon-192.png" alt=""></div>
+</div>
+
+<script>
+(function () {
+  var APP_URL = 'https://script.google.com/macros/s/AKfycbwazui_r8zg2MBafS8xlzQGHoYZ1WR5x3GHR6xWbMzpXQFWfJSHHPPPRnTftDKSXzOwcg/exec';
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  var params = new URLSearchParams(location.search);
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/.test(ua);
+
+  function openApp() {
+    document.getElementById('install').hidden = true;
+    document.getElementById('app').hidden = false;
+    var f = document.getElementById('frame');
+    f.addEventListener('load', function () { document.getElementById('loading').classList.add('out'); });
+    f.src = APP_URL;
+  }
+
+  if (standalone || params.get('open') === '1') { openApp(); }
+  else {
+    document.getElementById('install').hidden = false;
+    document.getElementById(isIOS ? 'ios' : isAndroid ? 'android' : 'desktop').hidden = false;
+  }
+
+  document.getElementById('openWeb').addEventListener('click', openApp);
+
+  // Android / Chrome: one-tap install when the browser offers it
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); deferred = e;
+    document.getElementById('installBtn').hidden = false;
+  });
+  document.getElementById('installBtn').addEventListener('click', function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.finally(function () { deferred = null; document.getElementById('installBtn').hidden = true; });
+  });
+  window.addEventListener('appinstalled', function () { document.getElementById('installBtn').hidden = true; });
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+})();
+</script>
+</body>
+</html>
