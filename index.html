@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>מעקב מחלקה</title>
-<meta name="description" content="נוכחות, בקשות יציאה, רימונים וצל״מים למחלקה">
+<meta name="description" content="נוכחות, בקשות יציאה, תחמושת וצל״מים למחלקה">
 <meta name="theme-color" content="#14170F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -16,78 +16,121 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap">
 <style>
-:root{--bg:#12150D;--surface:#1C2016;--fg:#E8EBDF;--muted:#9BA28E;--line:#3A4130;--accent:#9DBE6C;--accent-fg:#14170F;--nav:#1C2016;color-scheme:dark}
+:root{--bg:#12150D;--surface:#1C2016;--sunk:#252A1D;--fg:#E8EBDF;--muted:#9BA28E;--line:#3A4130;--accent:#9DBE6C;--accent-fg:#14170F;--accent-soft:#2C3820;--ios:#0A84FF;--nav:#1C2016;color-scheme:dark}
 @media (prefers-color-scheme: light){:root{--nav:#FFFFFF}}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:"Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:"Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
 
-/* app mode: the live app fills the screen; the bottom inset matches the app's tab bar */
+/* app mode */
 #app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--nav)}
 #app iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
 #app .safe{flex:none;height:env(safe-area-inset-bottom,0px);background:var(--nav)}
 #loading{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);transition:opacity .3s}
 #loading.out{opacity:0;pointer-events:none}
-#loading img{width:88px;height:88px;border-radius:22px}
+#loading img{width:96px;height:96px;border-radius:22px}
 
 /* install page */
-#install{min-height:100%;display:grid;place-items:center;padding:32px 20px calc(32px + env(safe-area-inset-bottom,0px))}
-.card{width:100%;max-width:400px;display:grid;justify-items:center;gap:6px;text-align:center}
-.logo{width:112px;height:112px;border-radius:26px;box-shadow:0 8px 28px rgb(0 0 0 / .4)}
-h1{margin:14px 0 0;font-size:30px;font-weight:800}
-.sub{margin:0;color:var(--muted);font-size:16px;font-weight:600}
-.panel{width:100%;margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;text-align:start}
-.panel h2{margin:0 0 12px;font-size:17px;font-weight:700}
-ol{margin:0;padding:0;list-style:none;display:grid;gap:12px;counter-reset:s}
-ol li{display:flex;gap:12px;align-items:center;font-size:16px;line-height:1.4;counter-increment:s}
-ol li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-weight:800;display:grid;place-items:center;font-size:14px}
-.ic{display:inline-block;vertical-align:-4px;width:20px;height:20px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border-radius:12px;border:0;font:inherit;font-size:17px;font-weight:700;text-decoration:none;cursor:pointer}
-.primary{background:var(--accent);color:var(--accent-fg);margin-top:22px}
-.link{background:none;color:var(--muted);font-size:15px;font-weight:600;min-height:44px;margin-top:6px}
-.note{margin:12px 0 0;font-size:13px;color:var(--muted)}
+#install{max-width:440px;margin:0 auto;padding:28px 20px calc(28px + env(safe-area-inset-bottom,0px))}
+.hero{display:grid;justify-items:center;text-align:center;gap:4px}
+.logo{width:96px;height:96px;border-radius:24px;box-shadow:0 10px 30px rgb(0 0 0 / .45)}
+h1{margin:14px 0 0;font-size:28px;font-weight:800}
+.sub{margin:2px 0 0;color:var(--muted);font-size:16px;font-weight:600;line-height:1.45}
+
+.step0{margin-top:24px;display:flex;gap:12px;align-items:center;background:var(--accent-soft);border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.45}
+.step0 b{color:var(--accent)}
+.step0 svg{flex:none;width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.seg{display:flex;background:var(--sunk);border-radius:12px;padding:3px;gap:2px;margin-top:22px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;min-height:40px;font-weight:700;font-size:15px;color:var(--muted)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 0 0 1px var(--line)}
+
+.howto{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:6px 16px}
+.st{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:14px 0;border-top:1px solid var(--line)}
+.st:first-child,.st[hidden]+.st{border-top:0}
+.num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-weight:800;display:grid;place-items:center;font-size:15px}
+.st h3{margin:3px 0 0;font-size:17px;font-weight:700}
+.st p{margin:4px 0 0;font-size:14px;color:var(--muted);line-height:1.5}
+/* look-alikes of the phone's own buttons, so people recognize what to tap */
+.ui{margin-top:10px;max-width:100%;flex-wrap:wrap;row-gap:2px;display:inline-flex;align-items:center;gap:10px;background:#2C2C2E;color:#fff;border-radius:12px;padding:9px 14px;font-size:15px;font-weight:600;direction:ltr}
+.ui svg{width:20px;height:20px;fill:none;stroke:var(--ios);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ui.and svg{stroke:#fff}
+.ui .he{direction:rtl;color:#A1A1A6;font-weight:500;font-size:13px}
+.ui.btnlike{background:var(--ios);color:#fff}
+.or{font-size:12px;color:var(--muted);margin:6px 0 0}
+
+.big{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:54px;border-radius:14px;border:0;font-size:17px;font-weight:800;margin-top:16px}
+.big.primary{background:var(--accent);color:var(--accent-fg)}
+.big svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.after{margin-top:18px;text-align:center;font-size:14px;color:var(--muted);line-height:1.5}
+.after b{color:var(--fg)}
+.link{display:block;width:100%;margin-top:6px;background:none;border:0;color:var(--muted);font-size:15px;font-weight:600;min-height:44px;text-decoration:underline;text-underline-offset:3px}
 </style>
 </head>
 <body>
 
-<div id="install" hidden>
-  <div class="card">
+<main id="install" hidden>
+  <div class="hero">
     <img class="logo" src="icons/icon-512.png" alt="">
     <h1>מעקב מחלקה</h1>
-    <p class="sub">נוכחות, בקשות יציאה, תחמושת וצל״מים</p>
-
-    <button class="btn primary" id="installBtn" hidden>
-      <svg class="ic" style="stroke:currentColor" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
-      התקנת האפליקציה
-    </button>
-
-    <div class="panel" id="ios" hidden>
-      <h2>התקנה באייפון</h2>
-      <ol>
-        <li><span>לוחצים על כפתור השיתוף <svg class="ic" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg> בתחתית ספארי</span></li>
-        <li><span>גוללים ובוחרים <b>״הוספה למסך הבית״</b></span></li>
-        <li><span>לוחצים <b>״הוספה״</b>, והאייקון יופיע במסך הבית</span></li>
-      </ol>
-      <p class="note">אם פתחתם מוואטסאפ, לחצו קודם על ⋯ ובחרו ״פתיחה בספארי״.</p>
-    </div>
-
-    <div class="panel" id="android" hidden>
-      <h2>התקנה באנדרואיד</h2>
-      <ol>
-        <li><span>לוחצים על התפריט <b>⋮</b> בכרום</span></li>
-        <li><span>בוחרים <b>״התקנת אפליקציה״</b> או <b>״הוספה למסך הבית״</b></span></li>
-        <li><span>מאשרים, והאייקון יופיע במסך הבית</span></li>
-      </ol>
-    </div>
-
-    <div class="panel" id="desktop" hidden>
-      <h2>האפליקציה בנויה לטלפון</h2>
-      <p class="note" style="margin:0">שלחו לעצמכם את הקישור הזה ופתחו אותו בטלפון כדי להתקין. אפשר גם להמשיך כאן במחשב.</p>
-    </div>
-
-    <button class="btn link" id="openWeb">המשך בדפדפן בלי להתקין</button>
+    <p class="sub">מתקינים פעם אחת למסך הבית,<br>ופותחים מהאייקון כמו כל אפליקציה.</p>
   </div>
-</div>
+
+  <div class="step0" id="openInBrowser">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+    <span id="openInBrowserTx"></span>
+  </div>
+
+  <div class="seg" role="tablist" aria-label="סוג טלפון">
+    <button role="tab" id="t-ios" aria-selected="true">אייפון</button>
+    <button role="tab" id="t-and" aria-selected="false">אנדרואיד</button>
+  </div>
+
+  <section class="howto" id="p-ios" aria-label="התקנה באייפון">
+    <div class="st"><span class="num">1</span><div>
+      <h3>פותחים את תפריט השיתוף</h3>
+      <p>לוחצים על שלוש הנקודות ליד שורת הכתובת, ואז על ״שיתוף״.</p>
+      <span class="ui"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18" cy="12" r="1.3"/></svg>›<svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Share<span class="he">שיתוף</span></span>
+      <p class="or">בגרסה ישנה יותר של אייפון: כפתור השיתוף נמצא ישירות בתחתית המסך.</p>
+    </div></div>
+    <div class="st"><span class="num">2</span><div>
+      <h3>בוחרים ״הוספה למסך הבית״</h3>
+      <p>גוללים מעט למטה ברשימה עד שמופיעה האפשרות.</p>
+      <span class="ui"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>Add to Home Screen<span class="he">הוספה למסך הבית</span></span>
+    </div></div>
+    <div class="st"><span class="num">3</span><div>
+      <h3>לוחצים ״הוספה״ למעלה</h3>
+      <p>אם מופיע מתג ״פתיחה כיישום אינטרנט״, משאירים אותו דולק.</p>
+      <span class="ui btnlike">Add<span class="he" style="color:#E5F0FF">הוספה</span></span>
+    </div></div>
+  </section>
+
+  <section class="howto" id="p-and" aria-label="התקנה באנדרואיד" hidden>
+    <div class="st" id="andOneTap" hidden><span class="num">✓</span><div>
+      <h3>התקנה בלחיצה אחת</h3>
+      <p>הטלפון שלכם תומך בהתקנה ישירה.</p>
+      <button class="big primary" id="installBtn"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>התקנת האפליקציה</button>
+    </div></div>
+    <div class="st"><span class="num">1</span><div>
+      <h3>פותחים את התפריט של כרום</h3>
+      <p>לוחצים על שלוש הנקודות בפינה העליונה.</p>
+      <span class="ui and"><svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="18" r="1.3"/></svg>Menu<span class="he">תפריט</span></span>
+    </div></div>
+    <div class="st"><span class="num">2</span><div>
+      <h3>בוחרים ״התקנת אפליקציה״</h3>
+      <p>בחלק מהטלפונים האפשרות נקראת ״הוספה למסך הבית״.</p>
+      <span class="ui and"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6M9 11l3 3 3-3"/></svg>Install app<span class="he">התקנת אפליקציה</span></span>
+    </div></div>
+    <div class="st"><span class="num">3</span><div>
+      <h3>מאשרים ״התקנה״</h3>
+      <p>האייקון יופיע במסך הבית ובמגירת האפליקציות.</p>
+    </div></div>
+  </section>
+
+  <p class="after">אחרי ההתקנה: <b>פותחים מהאייקון במסך הבית</b> ומזינים את קוד הגישה של המחלקה.</p>
+  <button class="link" id="openWeb">לא עכשיו, להמשיך בדפדפן</button>
+</main>
 
 <div id="app" hidden>
   <iframe id="frame" title="מעקב מחלקה" allow="clipboard-write; web-share; fullscreen"></iframe>
@@ -103,6 +146,8 @@ ol li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:
   var ua = navigator.userAgent;
   var isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var isAndroid = /Android/.test(ua);
+  var inApp = /FBAN|FBAV|Instagram|Line\/|WhatsApp|Telegram|wv\)/.test(ua);
+  var iosOtherBrowser = isIOS && /CriOS|FxiOS|EdgiOS/.test(ua);
 
   function openApp() {
     document.getElementById('install').hidden = true;
@@ -111,27 +156,41 @@ ol li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:
     f.addEventListener('load', function () { document.getElementById('loading').classList.add('out'); });
     f.src = APP_URL;
   }
+  function show(p) {
+    document.getElementById('t-ios').setAttribute('aria-selected', String(p === 'ios'));
+    document.getElementById('t-and').setAttribute('aria-selected', String(p === 'and'));
+    document.getElementById('p-ios').hidden = p !== 'ios';
+    document.getElementById('p-and').hidden = p !== 'and';
+  }
 
   if (standalone || params.get('open') === '1') { openApp(); }
   else {
     document.getElementById('install').hidden = false;
-    document.getElementById(isIOS ? 'ios' : isAndroid ? 'android' : 'desktop').hidden = false;
+    show(isAndroid ? 'and' : 'ios');
+    var tip = document.getElementById('openInBrowserTx');
+    if (isIOS) tip.innerHTML = 'ההתקנה עובדת רק מ<b>ספארי</b>. אם הקישור נפתח בתוך וואטסאפ, לוחצים על סמל המצפן או על ״פתיחה בספארי״, וממשיכים משם.';
+    else if (isAndroid) tip.innerHTML = 'ההתקנה עובדת מ<b>כרום</b>. אם הקישור נפתח בתוך וואטסאפ, לוחצים על ⋮ ובוחרים ״פתיחה בכרום״.';
+    else tip.innerHTML = 'האפליקציה בנויה ל<b>טלפון</b>. שלחו לעצמכם את הקישור ופתחו אותו בטלפון כדי להתקין.';
+    if (iosOtherBrowser) tip.innerHTML = 'פתחתם בדפדפן אחר. כדי להתקין, העתיקו את הקישור ופתחו אותו ב<b>ספארי</b>.';
+    if (inApp) document.getElementById('openInBrowser').style.outline = '2px solid var(--accent)';
   }
 
+  document.getElementById('t-ios').addEventListener('click', function () { show('ios'); });
+  document.getElementById('t-and').addEventListener('click', function () { show('and'); });
   document.getElementById('openWeb').addEventListener('click', openApp);
 
-  // Android / Chrome: one-tap install when the browser offers it
   var deferred = null;
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault(); deferred = e;
-    document.getElementById('installBtn').hidden = false;
+    document.getElementById('andOneTap').hidden = false;
+    show('and');
   });
   document.getElementById('installBtn').addEventListener('click', function () {
     if (!deferred) return;
     deferred.prompt();
-    deferred.userChoice.finally(function () { deferred = null; document.getElementById('installBtn').hidden = true; });
+    deferred.userChoice.finally(function () { deferred = null; document.getElementById('andOneTap').hidden = true; });
   });
-  window.addEventListener('appinstalled', function () { document.getElementById('installBtn').hidden = true; });
+  window.addEventListener('appinstalled', function () { document.getElementById('andOneTap').hidden = true; });
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 })();
