@@ -149,12 +149,14 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
   var inApp = /FBAN|FBAV|Instagram|Line\/|WhatsApp|Telegram|wv\)/.test(ua);
   var iosOtherBrowser = isIOS && /CriOS|FxiOS|EdgiOS/.test(ua);
 
+  // An invite link (…/?invite=<token>) opens the app straight on the "open a platoon" screen.
+  var invite = standalone ? null : params.get('invite'); // a home-screen app never reopens an invite
   function openApp() {
     document.getElementById('install').hidden = true;
     document.getElementById('app').hidden = false;
     var f = document.getElementById('frame');
     f.addEventListener('load', function () { document.getElementById('loading').classList.add('out'); });
-    f.src = APP_URL;
+    f.src = invite ? APP_URL + '?invite=' + encodeURIComponent(invite) : APP_URL;
   }
   function show(p) {
     document.getElementById('t-ios').setAttribute('aria-selected', String(p === 'ios'));
@@ -163,7 +165,7 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
     document.getElementById('p-and').hidden = p !== 'and';
   }
 
-  if (standalone || params.get('open') === '1') { openApp(); }
+  if (standalone || invite || params.get('open') === '1') { openApp(); }
   else {
     document.getElementById('install').hidden = false;
     show(isAndroid ? 'and' : 'ios');
