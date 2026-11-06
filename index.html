@@ -149,6 +149,38 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
   var inApp = /FBAN|FBAV|Instagram|Line\/|WhatsApp|Telegram|wv\)/.test(ua);
   var iosOtherBrowser = isIOS && /CriOS|FxiOS|EdgiOS/.test(ua);
 
+  // Google sign-in for the Sheets export (reports go to the user's own Drive). The app asks for
+  // it with postMessage {mk:'gauth'}; Google redirects back here with the token in the hash.
+  // Set GOOGLE_CLIENT_ID to the OAuth web client id (Google Cloud console).
+  var GOOGLE_CLIENT_ID = '';
+  var fromGoogle = false;
+  (function takeGoogleToken() {
+    if (location.hash.indexOf('state=') < 0) return;
+    var h = new URLSearchParams(location.hash.slice(1));
+    var expected = localStorage.getItem('mk:gstate');
+    if (!expected || h.get('state') !== expected) return;
+    fromGoogle = true;
+    localStorage.removeItem('mk:gstate');
+    if (h.get('access_token')) {
+      var exp = Date.now() + (parseInt(h.get('expires_in'), 10) || 3600) * 1000;
+      localStorage.setItem('mk:gtok', JSON.stringify({ t: h.get('access_token'), exp: exp }));
+    }
+    history.replaceState(null, '', location.pathname + location.search);
+  })();
+  function googleSignIn() {
+    if (!GOOGLE_CLIENT_ID) return;
+    var state = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('mk:gstate', state);
+    location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
+      client_id: GOOGLE_CLIENT_ID,
+      redirect_uri: location.origin + '/',
+      response_type: 'token',
+      scope: 'https://www.googleapis.com/auth/drive.file',
+      include_granted_scopes: 'true',
+      state: state
+    }).toString();
+  }
+
   // An invite link (…/?invite=<token>) opens the app straight on the "open a platoon" screen.
   var invite = standalone ? null : params.get('invite'); // a home-screen app never reopens an invite
   function openApp() {
@@ -165,7 +197,7 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
     document.getElementById('p-and').hidden = p !== 'and';
   }
 
-  if (standalone || invite || params.get('open') === '1') { openApp(); }
+  if (standalone || invite || fromGoogle || params.get('open') === '1') { openApp(); }
   else {
     document.getElementById('install').hidden = false;
     show(isAndroid ? 'and' : 'ios');
@@ -196,7 +228,7 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
 
   // storage bridge: the app frame keeps its settings here (first party) so they survive between launches,
   // and gets the real bottom safe-area so its tab bar sits right above the home indicator
-  var KEYS = ['g2code', 'g2unit', 'tourDone', 'reqView', 'swHint'];
+  var KEYS = ['g2code', 'g2unit', 'tourDone', 'reqView', 'swHint', 'gtok', 'gpending', 'gsheets'];
   function okOrigin(o) { return /^https:[/][/][a-z0-9-]+[.]googleusercontent[.]com$/.test(o) || o === 'https:' + '/' + '/script.google.com'; }
   window.addEventListener('message', function (e) {
     var d = e.data; if (!d || !d.mk || !okOrigin(e.origin)) return;
@@ -206,6 +238,8 @@ h1{margin:14px 0 0;font-size:28px;font-weight:800}
         KEYS.forEach(function (k) { var v = localStorage.getItem('mk:' + k); if (v != null) out[k] = v; });
         var sab = document.getElementById('sabProbe').getBoundingClientRect().height || 0;
         e.source.postMessage({ mk: 'data', data: out, sab: sab }, '*');
+      } else if (d.mk === 'gauth') {
+        googleSignIn();
       } else if (d.mk === 'set' && KEYS.indexOf(d.k) > -1) {
         if (d.v == null) localStorage.removeItem('mk:' + d.k); else localStorage.setItem('mk:' + d.k, String(d.v));
       }
